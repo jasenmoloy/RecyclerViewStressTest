@@ -6,18 +6,19 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.jasenmoloy.recyclerviewstresstest.R;
-import com.jasenmoloy.recyclerviewstresstest.domain.BaseTestDataModel;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.MainView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by jasenmoloy on 8/14/16.
  */
 public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
-    List<BaseTestDataModel> cardData;
+    List<MainView.CardData> cardData;
 
-    public MainRecyclerViewAdapter(List<BaseTestDataModel> data) {
-        cardData = data;
+    public MainRecyclerViewAdapter() {
+        cardData = new ArrayList<>();
     }
 
     @Override
@@ -51,5 +52,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onViewRecycled(ViewHolder holder) {
         holder.onViewRecycled();
         super.onViewRecycled(holder);
+    }
+
+    public void addItem(MainView.CardData data) {
+        cardData.add(data);
+        notifyItemInserted(cardData.size()-1);
+
     }
 }
