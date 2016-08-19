@@ -1,6 +1,5 @@
-package com.jasenmoloy.recyclerviewstresstest.domain;
+package com.jasenmoloy.recyclerviewstresstest.domain.models;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

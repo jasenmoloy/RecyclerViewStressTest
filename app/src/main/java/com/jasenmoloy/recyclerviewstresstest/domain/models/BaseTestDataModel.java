@@ -1,4 +1,4 @@
-package com.jasenmoloy.recyclerviewstresstest.domain;
+package com.jasenmoloy.recyclerviewstresstest.domain.models;
 
 /**
  * Created by jasenmoloy on 8/14/16.
