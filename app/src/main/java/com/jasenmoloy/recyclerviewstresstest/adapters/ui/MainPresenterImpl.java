@@ -4,18 +4,9 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 
-import com.google.gson.JsonObject;
-import com.jasenmoloy.recyclerviewstresstest.R;
-import com.jasenmoloy.recyclerviewstresstest.application.Constants;
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.App;
-import com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit.ChuckNorrisDatabaseApi;
-import com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit.imgur.GalleryResponse;
+import com.jasenmoloy.recyclerviewstresstest.adapters.http.cndb.ChuckNorrisDatabaseApi;
 
-import java.util.Collection;
-
-import retrofit2.Response;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;

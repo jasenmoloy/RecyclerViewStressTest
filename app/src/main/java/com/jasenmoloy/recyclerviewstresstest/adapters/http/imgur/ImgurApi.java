@@ -1,4 +1,4 @@
-package com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit.imgur;
+package com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur;
 
 import com.google.gson.JsonObject;
 

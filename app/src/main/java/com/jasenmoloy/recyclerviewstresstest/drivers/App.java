@@ -2,8 +2,8 @@ package com.jasenmoloy.recyclerviewstresstest.drivers;
 
 import android.app.Application;
 
-import com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit.ChuckNorrisDatabaseApi;
-import com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit.imgur.ImgurApi;
+import com.jasenmoloy.recyclerviewstresstest.adapters.http.cndb.ChuckNorrisDatabaseApi;
+import com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur.ImgurApi;
 import com.jasenmoloy.recyclerviewstresstest.drivers.http.LoggingIntercepter;
 
 import okhttp3.OkHttpClient;

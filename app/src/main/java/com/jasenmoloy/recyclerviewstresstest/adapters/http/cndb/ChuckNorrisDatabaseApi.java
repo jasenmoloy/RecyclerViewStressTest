@@ -1,4 +1,4 @@
-package com.jasenmoloy.recyclerviewstresstest.drivers.database.retrofit;
+package com.jasenmoloy.recyclerviewstresstest.adapters.http.cndb;
 
 import android.text.Html;
 
