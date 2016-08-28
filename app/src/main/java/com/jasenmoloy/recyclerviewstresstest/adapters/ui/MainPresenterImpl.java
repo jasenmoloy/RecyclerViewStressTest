@@ -1,15 +1,33 @@
 package com.jasenmoloy.recyclerviewstresstest.adapters.ui;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur.GalleryResponse;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ChuckNorrisJokeModel;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ImgurImageModel;
+import com.jasenmoloy.recyclerviewstresstest.application.Constants;
+import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
+import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.App;
-import com.jasenmoloy.recyclerviewstresstest.adapters.http.cndb.ChuckNorrisDatabaseApi;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import retrofit2.Response;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by jasenmoloy on 8/16/16.
@@ -17,10 +35,9 @@ import rx.functions.Action1;
 public class MainPresenterImpl implements MainPresenter {
 
     private MainView view;
-    private MainModel model;
+    private MainModelImpl model;
 
-    private Subscription imgurSub;
-    private Subscription chuckNorrisSub;
+    private Subscription apiSub;
 
     public MainPresenterImpl(MainView view) {
         this.view = view;
@@ -31,13 +48,82 @@ public class MainPresenterImpl implements MainPresenter {
     public void onCreate(Bundle savedInstanceBundle) {
         unsubscribeFromAll();
 
-        chuckNorrisSub = App.getChuckNorrisApi()
-                .getItems(10000, "Chuck", "Norris")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ChuckNorrisDatabaseApi.Response>() {
+        apiSub = App.getChuckNorrisApi().getItems(10000, "Chuck", "Norris")
+                .observeOn(Schedulers.io())
+                .map(new Func1<Response<JsonObject>, MainModelImpl.RestApiPair>() {
                     @Override
-                    public void call(ChuckNorrisDatabaseApi.Response response) {
-                        onItemNext(response.items);
+                    public MainModelImpl.RestApiPair call(Response<JsonObject> response) {
+                        MainModelImpl.RestApiPair pair = new MainModelImpl.RestApiPair();
+
+                        if (response != null) {
+                            JsonArray jokes = response.body().get("value").getAsJsonArray();
+                            String joke;
+
+                            for (int i = 0; i < jokes.size(); i++) {
+                                joke = jokes.get(i).getAsJsonObject()
+                                        .get("joke").getAsString();
+
+                                pair.chuckNorrisJokes.add(Html.fromHtml(joke).toString());
+                            }
+                        }
+
+                        return pair;
+                    }
+                })
+                .zipWith(App.getImgurApi().getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", 0).retry(3),
+                        new Func2<MainModelImpl.RestApiPair, Response<JsonObject>, MainModelImpl.RestApiPair>() {
+                            @Override
+                            public MainModelImpl.RestApiPair call(MainModelImpl.RestApiPair pair, Response<JsonObject> response) {
+                                if(response != null) {
+                                    GalleryResponse galleryResponse = new GalleryResponse(response.body());
+                                    Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
+
+                                    for (BaseGalleryResponseModel m : baseResponses) {
+                                        if (!m.isAlbum) {
+                                            GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                            pair.imgurImages.add(galleryImage);
+                                        }
+                                    }
+                                }
+                                return pair;
+                            }
+                        })
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends MainModelImpl.RestApiPair>>() {
+                    @Override
+                    public Observable<? extends MainModelImpl.RestApiPair> call(Throwable throwable) {
+                        return App.getImgurApi().getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", 0)
+                                .retry(3)
+                                .map(new Func1<Response<JsonObject>, MainModelImpl.RestApiPair>() {
+                                    @Override
+                                    public MainModelImpl.RestApiPair call(Response<JsonObject> response) {
+                                        MainModelImpl.RestApiPair pair = new MainModelImpl.RestApiPair();
+
+                                        if(response != null) {
+                                            GalleryResponse galleryResponse = new GalleryResponse(response.body());
+                                            Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
+
+                                            for (BaseGalleryResponseModel m : baseResponses) {
+                                                if (!m.isAlbum) {
+                                                    GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                                    pair.imgurImages.add(galleryImage);
+                                                }
+                                            }
+                                        }
+
+                                        return pair;
+                                    }
+                                });
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<MainModelImpl.RestApiPair>() {
+                    @Override
+                    public void call(MainModelImpl.RestApiPair pair) {
+                        model.setChuckNorrisJokes(pair.chuckNorrisJokes);
+                        model.setImages(pair.imgurImages);
+
+                        generateCardData(model.getChuckNorrisJokes(), model.getImages());
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -45,31 +131,7 @@ public class MainPresenterImpl implements MainPresenter {
                         onItemsError(throwable);
                     }
                 });
-
-//        imgurSub = App.getImgurApi()
-//                .getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", 0)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Action1<Response<JsonObject>>() {
-//                    @Override
-//                    public void call(Response<JsonObject> response) {
-//                        GalleryResponse galleryResponse = new GalleryResponse(response.body());
-//                        Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
-//
-//                        for(BaseGalleryResponseModel m : baseResponses) {
-//                            if(m.isAlbum) {
-//                                GalleryImageModel galleryImage = (GalleryImageModel) m;
-//
-//                                Log.v("JAM", "Image: " + galleryImage.link);
-//                            }
-//                        }
-//                    }
-//                }, new Action1<Throwable>() {
-//                    @Override
-//                    public void call(Throwable throwable) {
-//                        onItemsError(throwable);
-//                    }
-//                });
-    }
+}
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -96,30 +158,6 @@ public class MainPresenterImpl implements MainPresenter {
         unsubscribeFromAll();
     }
 
-    public void onItemNext(final ChuckNorrisDatabaseApi.Item[] items) {
-        MainView.CardData data;
-
-        for(int i = 0; i < items.length; i++) {
-            final String joke = Html.fromHtml(items[i].text).toString();
-
-            Log.v("JAM", "Joke: " + joke);
-
-            data = new MainView.CardData() {
-                @Override
-                public String getDescription() {
-                    return joke;
-                }
-
-                @Override
-                public int getCardViewType() {
-                    return 0;
-                }
-            };
-
-            view.onDataItemLoaded(data);
-        }
-    }
-
     public void onItemsError(Throwable throwable) {
         Log.w("JAM", throwable.getMessage());
 
@@ -127,14 +165,49 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     private void unsubscribeFromAll() {
-        if(chuckNorrisSub != null) {
-            chuckNorrisSub.unsubscribe();
-            chuckNorrisSub = null;
+        if(apiSub != null) {
+            apiSub.unsubscribe();
+            apiSub = null;
+        }
+    }
+
+    private void generateCardData(List<String> jokes, List<GalleryImageModel> images) {
+        List<BaseModel> cards = new ArrayList<>();
+        int jokesIdx = 0;
+        int imagesIdx = 0;
+
+        while(jokesIdx < jokes.size() && imagesIdx < images.size()) {
+            cards.add(
+                    new ImgurImageModel(
+                            images.get(imagesIdx).title,
+                            Uri.parse(images.get(imagesIdx).link),
+                            images.get(imagesIdx).description)
+            );
+            imagesIdx++;
+
+            cards.add(
+                    new ChuckNorrisJokeModel(jokes.get(jokesIdx))
+            );
+            jokesIdx++;
         }
 
-        if(imgurSub != null) {
-            imgurSub.unsubscribe();
-            imgurSub = null;
+        while(imagesIdx < images.size()) {
+            cards.add(
+                    new ImgurImageModel(
+                            images.get(imagesIdx).title,
+                            Uri.parse(images.get(imagesIdx).link),
+                            images.get(imagesIdx).description)
+            );
+            imagesIdx++;
         }
+
+        while(jokesIdx < jokes.size()) {
+            cards.add(
+                    new ChuckNorrisJokeModel(jokes.get(jokesIdx))
+            );
+            jokesIdx++;
+        }
+
+        view.onDataItemsLoaded(cards);
     }
 }

@@ -3,7 +3,6 @@ package com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryAlbumModel;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
@@ -26,7 +25,6 @@ public class GalleryResponse {
     }
 
     public Collection<BaseGalleryResponseModel> getGalleryResponseArray() {
-        JsonParser parser = new JsonParser();
         JsonArray array = body.get("data").getAsJsonArray();
         List<BaseGalleryResponseModel> responses = new ArrayList<>(array.size());
 

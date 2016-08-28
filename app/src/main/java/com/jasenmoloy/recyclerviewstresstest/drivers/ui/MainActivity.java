@@ -1,6 +1,5 @@
 package com.jasenmoloy.recyclerviewstresstest.drivers.ui;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,10 @@ import com.jasenmoloy.recyclerviewstresstest.R;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.MainPresenter;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.MainPresenterImpl;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.MainView;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.ui.recyclerview.MainRecyclerViewAdapter;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -61,17 +63,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void onDataItemLoaded(CardData data) {
+    public void onDataItemLoaded(BaseModel data) {
         recyclerAdapter.addItem(data);
+    }
+
+    @Override
+    public void onDataItemsLoaded(List<BaseModel> data) {
+        recyclerAdapter.setItems(data);
     }
 
     @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
     }
 }

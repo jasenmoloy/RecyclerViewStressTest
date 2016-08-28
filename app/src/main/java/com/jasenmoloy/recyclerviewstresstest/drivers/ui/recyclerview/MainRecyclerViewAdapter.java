@@ -6,7 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.jasenmoloy.recyclerviewstresstest.R;
-import com.jasenmoloy.recyclerviewstresstest.adapters.ui.MainView;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
+import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.CardViewTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.List;
 /**
  * Created by jasenmoloy on 8/14/16.
  */
-public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
-    List<MainView.CardData> cardData;
+public class MainRecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
+    List<BaseModel> cardData;
 
     public MainRecyclerViewAdapter() {
         cardData = new ArrayList<>();
@@ -43,9 +44,21 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        CardView cardView;
-        cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_image_description, parent, false);
-        return new BasicViewHolder(cardView);
+        CardView cardView = null;
+        ViewHolder holder = null;
+
+        switch(viewType) {
+            case CardViewTypes.CHUCKNORRISJOKE:
+                cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_chucknorrisjoke, parent, false);
+                holder = new ChuckNorrisJokeCard(cardView);
+                break;
+            case CardViewTypes.IMGURIMAGE:
+                cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_imgurimage, parent, false);
+                holder = new ImgurImageCard(cardView);
+                break;
+        }
+
+        return holder;
     }
 
     @Override
@@ -54,9 +67,13 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         super.onViewRecycled(holder);
     }
 
-    public void addItem(MainView.CardData data) {
+    public void addItem(BaseModel data) {
         cardData.add(data);
         notifyItemInserted(cardData.size()-1);
+    }
 
+    public void setItems(List<BaseModel> data) {
+        cardData = data;
+        notifyDataSetChanged();
     }
 }
