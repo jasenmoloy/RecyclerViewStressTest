@@ -34,6 +34,16 @@ import rx.schedulers.Schedulers;
  */
 public class MainPresenterImpl implements MainPresenter {
 
+    class RestApiPair {
+        List<String> chuckNorrisJokes;
+        List<GalleryImageModel> imgurImages;
+
+        public RestApiPair() {
+            chuckNorrisJokes = new ArrayList<>();
+            imgurImages = new ArrayList<>();
+        }
+    }
+
     private MainView view;
     private MainModelImpl model;
 
@@ -50,10 +60,10 @@ public class MainPresenterImpl implements MainPresenter {
 
         apiSub = App.getChuckNorrisApi().getItems(10000, "Chuck", "Norris")
                 .observeOn(Schedulers.io())
-                .map(new Func1<Response<JsonObject>, MainModelImpl.RestApiPair>() {
+                .map(new Func1<Response<JsonObject>, RestApiPair>() {
                     @Override
-                    public MainModelImpl.RestApiPair call(Response<JsonObject> response) {
-                        MainModelImpl.RestApiPair pair = new MainModelImpl.RestApiPair();
+                    public RestApiPair call(Response<JsonObject> response) {
+                        RestApiPair pair = new RestApiPair();
 
                         if (response != null) {
                             JsonArray jokes = response.body().get("value").getAsJsonArray();
@@ -71,9 +81,9 @@ public class MainPresenterImpl implements MainPresenter {
                     }
                 })
                 .zipWith(App.getImgurApi().getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", 0).retry(3),
-                        new Func2<MainModelImpl.RestApiPair, Response<JsonObject>, MainModelImpl.RestApiPair>() {
+                        new Func2<RestApiPair, Response<JsonObject>, RestApiPair>() {
                             @Override
-                            public MainModelImpl.RestApiPair call(MainModelImpl.RestApiPair pair, Response<JsonObject> response) {
+                            public RestApiPair call(RestApiPair pair, Response<JsonObject> response) {
                                 if(response != null) {
                                     GalleryResponse galleryResponse = new GalleryResponse(response.body());
                                     Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
@@ -88,15 +98,15 @@ public class MainPresenterImpl implements MainPresenter {
                                 return pair;
                             }
                         })
-                .onErrorResumeNext(new Func1<Throwable, Observable<? extends MainModelImpl.RestApiPair>>() {
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends RestApiPair>>() {
                     @Override
-                    public Observable<? extends MainModelImpl.RestApiPair> call(Throwable throwable) {
+                    public Observable<? extends RestApiPair> call(Throwable throwable) {
                         return App.getImgurApi().getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", 0)
                                 .retry(3)
-                                .map(new Func1<Response<JsonObject>, MainModelImpl.RestApiPair>() {
+                                .map(new Func1<Response<JsonObject>, RestApiPair>() {
                                     @Override
-                                    public MainModelImpl.RestApiPair call(Response<JsonObject> response) {
-                                        MainModelImpl.RestApiPair pair = new MainModelImpl.RestApiPair();
+                                    public RestApiPair call(Response<JsonObject> response) {
+                                        RestApiPair pair = new RestApiPair();
 
                                         if(response != null) {
                                             GalleryResponse galleryResponse = new GalleryResponse(response.body());
@@ -117,9 +127,9 @@ public class MainPresenterImpl implements MainPresenter {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<MainModelImpl.RestApiPair>() {
+                .subscribe(new Action1<RestApiPair>() {
                     @Override
-                    public void call(MainModelImpl.RestApiPair pair) {
+                    public void call(RestApiPair pair) {
                         model.setChuckNorrisJokes(pair.chuckNorrisJokes);
                         model.setImages(pair.imgurImages);
 

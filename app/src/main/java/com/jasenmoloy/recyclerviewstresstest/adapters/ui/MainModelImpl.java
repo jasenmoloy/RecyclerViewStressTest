@@ -11,16 +11,6 @@ import java.util.List;
  * Created by jasenmoloy on 8/16/16.
  */
 public class MainModelImpl {
-    static class RestApiPair {
-        List<String> chuckNorrisJokes;
-        List<GalleryImageModel> imgurImages;
-
-        public RestApiPair() {
-            chuckNorrisJokes = new ArrayList<>();
-            imgurImages = new ArrayList<>();
-        }
-    }
-
     private List<String> chuckNorrisJokes;
     private List<GalleryImageModel> images;
 
