@@ -45,13 +45,13 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     private MainView view;
-    private MainModelImpl model;
+    private MainModel model;
 
     private Subscription apiSub;
 
     public MainPresenterImpl(MainView view) {
         this.view = view;
-        model = new MainModelImpl();
+        model = new MainModel();
     }
 
     @Override
