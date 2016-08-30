@@ -42,9 +42,11 @@ class ImgurImageCard extends ViewHolder<ImgurImageModel> {
                             .load(model.imageUri)
                             .asBitmap()
                             .transcode(new BitmapToGlideDrawableTranscoder(image.getContext()), GlideDrawable.class)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL));
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            );
         }
 
+        request.diskCacheStrategy(DiskCacheStrategy.SOURCE);
         request.into(image);
 
         description.setText(model.description);
