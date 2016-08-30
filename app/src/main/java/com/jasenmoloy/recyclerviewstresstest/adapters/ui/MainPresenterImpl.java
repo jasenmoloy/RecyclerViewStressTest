@@ -114,6 +114,8 @@ public class MainPresenterImpl implements MainPresenter {
                     new ImgurImageModel(
                             images.get(imagesIdx).title,
                             Uri.parse(images.get(imagesIdx).link),
+                            images.get(imagesIdx).type,
+                            images.get(imagesIdx).size,
                             images.get(imagesIdx).description)
             );
             imagesIdx++;
@@ -129,6 +131,8 @@ public class MainPresenterImpl implements MainPresenter {
                     new ImgurImageModel(
                             images.get(imagesIdx).title,
                             Uri.parse(images.get(imagesIdx).link),
+                            images.get(imagesIdx).type,
+                            images.get(imagesIdx).size,
                             images.get(imagesIdx).description)
             );
             imagesIdx++;

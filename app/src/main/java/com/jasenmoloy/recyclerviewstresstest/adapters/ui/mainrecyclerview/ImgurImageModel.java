@@ -7,13 +7,18 @@ import android.net.Uri;
  */
 public class ImgurImageModel implements BaseModel {
     public String title;
+    public String type;
+    public int fileSize;
     public Uri imageUri;
     public String description;
 
-    public ImgurImageModel(String title, Uri imageUri, String description) {
+    public ImgurImageModel(String title, Uri imageUri, String type, int size, String description) {
         this.title = title;
         this.imageUri = imageUri;
+        this.fileSize = size;
         this.description = description;
+
+        this.type = type;
     }
 
     @Override

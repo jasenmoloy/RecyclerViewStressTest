@@ -4,7 +4,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.resource.transcode.BitmapToGlideDrawableTranscoder;
 import com.jasenmoloy.recyclerviewstresstest.R;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ImgurImageModel;
 
@@ -28,7 +32,20 @@ class ImgurImageCard extends ViewHolder<ImgurImageModel> {
     void setCard(ImgurImageModel model, int position) {
         title.setText(model.title);
 
-        Glide.with(image.getContext()).load(model.imageUri).into(image);
+        DrawableTypeRequest request = Glide.with(image.getContext())
+                .load(model.imageUri);
+
+        if(model.type.equals("image/gif")) {
+            //Create a thumbnail of the GIF in case it takes a while to load.
+            request.thumbnail(
+                    Glide.with(image.getContext())
+                            .load(model.imageUri)
+                            .asBitmap()
+                            .transcode(new BitmapToGlideDrawableTranscoder(image.getContext()), GlideDrawable.class)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL));
+        }
+
+        request.into(image);
 
         description.setText(model.description);
     }
