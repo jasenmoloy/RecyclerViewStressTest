@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.jasenmoloy.recyclerviewstresstest.R;
@@ -21,11 +22,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
     MainRecyclerViewAdapter recyclerAdapter;
     MainPresenter presenter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mainactivity_toolbar);
+        setSupportActionBar(toolbar);
 
         recyclerView = (RecyclerView) findViewById(R.id.mainactivity_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -46,6 +49,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onStart();
 
         presenter.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override

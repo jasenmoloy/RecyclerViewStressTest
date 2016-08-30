@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Recycler View Stress Test</string>
+
+    <string name="card_chucknorris_title">Chuck Norris Joke</string>
 </resources>
