@@ -72,7 +72,15 @@ public class MainRecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHolder>
         notifyItemInserted(cardData.size()-1);
     }
 
-    public void setItems(List<BaseModel> data) {
+    public void addItems(List<BaseModel> data) {
+        for(BaseModel m : data) {
+            cardData.add(m);
+            notifyItemInserted(cardData.size()-1);
+        }
+    }
+
+
+    public void replaceItems(List<BaseModel> data) {
         cardData = data;
         notifyDataSetChanged();
     }

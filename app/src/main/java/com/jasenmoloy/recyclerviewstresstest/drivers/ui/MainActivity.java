@@ -34,6 +34,20 @@ public class MainActivity extends AppCompatActivity implements MainView {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerAdapter = new MainRecyclerViewAdapter();
         recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if(!recyclerView.canScrollVertically(1)) { //Check if we can scroll down
+                    onScrolledToBottom();
+                }
+            }
+
+            void onScrolledToBottom() {
+                presenter.onRecyclerViewScrolledToBottom();
+            }
+        });
 
         presenter = new MainPresenterImpl(this);
         presenter.onCreate(savedInstanceState);
@@ -55,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     protected void onResume() {
         super.onResume();
 
+        presenter.onResume();
     }
 
     @Override
@@ -83,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void onDataItemsLoaded(List<BaseModel> data) {
-        recyclerAdapter.setItems(data);
+        recyclerAdapter.addItems(data);
     }
 
     @Override

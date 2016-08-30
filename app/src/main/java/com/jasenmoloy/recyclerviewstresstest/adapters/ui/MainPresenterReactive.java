@@ -10,12 +10,14 @@ import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResp
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.App;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import retrofit2.Response;
 import rx.Observable;
+import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -61,16 +63,23 @@ public class MainPresenterReactive {
             @Override
             public RestApiPair call(RestApiPair pair, Response<JsonObject> response) {
                 if(response != null) {
-                    GalleryResponse galleryResponse = new GalleryResponse(response.body());
-                    Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
+                    if(response.isSuccessful()) {
+                        GalleryResponse galleryResponse = new GalleryResponse(response.body());
+                        Collection<BaseGalleryResponseModel> baseResponses = galleryResponse.getGalleryResponseArray();
 
-                    for (BaseGalleryResponseModel m : baseResponses) {
-                        if (!m.isAlbum) {
-                            GalleryImageModel galleryImage = (GalleryImageModel) m;
-                            pair.imgurImages.add(galleryImage);
+                        for (BaseGalleryResponseModel m : baseResponses) {
+                            if (!m.isAlbum) {
+                                GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                pair.imgurImages.add(galleryImage);
+                            }
                         }
+                    } else {
+                        throw Exceptions.propagate(new IOException("Imgur gallery request returned " + response.code()));
                     }
+                } else {
+                    throw new NullPointerException("Retrofit response is null");
                 }
+
                 return pair;
             }
         };

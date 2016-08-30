@@ -13,4 +13,6 @@ public interface MainPresenter {
     void onResume();
     void onStop();
     void onDestroy();
+
+    void onRecyclerViewScrolledToBottom();
 }

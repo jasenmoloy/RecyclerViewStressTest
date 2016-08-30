@@ -2,6 +2,8 @@ package com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview;
 
 import android.net.Uri;
 
+import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
+
 /**
  * Created by jasenmoloy on 8/24/16.
  */
@@ -12,13 +14,12 @@ public class ImgurImageModel implements BaseModel {
     public Uri imageUri;
     public String description;
 
-    public ImgurImageModel(String title, Uri imageUri, String type, int size, String description) {
-        this.title = title;
-        this.imageUri = imageUri;
-        this.fileSize = size;
-        this.description = description;
-
-        this.type = type;
+    public ImgurImageModel(GalleryImageModel model) {
+        this.title = model.title;
+        this.imageUri = Uri.parse(model.link);
+        this.fileSize = model.size;
+        this.description = model.description;
+        this.type = model.type;
     }
 
     @Override
