@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
+import com.jasenmoloy.recyclerviewstresstest.application.models.imgur.GalleryImageModelAndroid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class MainModel {
     private static final String SAVED_CURRENT_PAGE = "model_current_page";
 
     private ArrayList<String> chuckNorrisJokes;
-    private ArrayList<GalleryImageModel> images;
+    private ArrayList<GalleryImageModelAndroid> images;
 
     private int jokesIdx = 0;
     private int imagesIdx = 0;
@@ -51,7 +51,7 @@ public class MainModel {
         return chuckNorrisJokes;
     }
 
-    public List<GalleryImageModel> getImages() {
+    public List<GalleryImageModelAndroid> getImages() {
         return images;
     }
 
@@ -67,16 +67,16 @@ public class MainModel {
         }
     }
 
-    public void addImages(List<GalleryImageModel> images) {
+    public void addImages(List<GalleryImageModelAndroid> images) {
         Log.v("JAM", "Adding " + images.size() + " images to model!");
 
-        for(GalleryImageModel m : images) {
+        for(GalleryImageModelAndroid m : images) {
             this.images.add(m);
         }
     }
 
     @Nullable
-    public GalleryImageModel getNextImage() {
+    public GalleryImageModelAndroid getNextImage() {
         if(imagesIdx >= images.size())
             return null;
 

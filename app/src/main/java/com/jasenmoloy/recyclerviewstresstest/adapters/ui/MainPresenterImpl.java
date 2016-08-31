@@ -9,8 +9,8 @@ import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseMo
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ChuckNorrisJokeModel;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ImgurImageModel;
 import com.jasenmoloy.recyclerviewstresstest.application.Constants;
+import com.jasenmoloy.recyclerviewstresstest.application.models.imgur.GalleryImageModelAndroid;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.App;
 
 import java.io.IOException;
@@ -119,10 +119,10 @@ public class MainPresenterImpl implements MainPresenter {
         apiSub = App.getImgurApi().getGallery(Constants.IMGUR_CLIENTID, "hot", "viral", model.getImgurCurrentPage())
                 .subscribeOn(Schedulers.io())
                 .retry(3) //Attempt 3 times before quitting
-                .map(new Func1<Response<JsonObject>, List<GalleryImageModel>>() {
+                .map(new Func1<Response<JsonObject>, List<GalleryImageModelAndroid>>() {
                     @Override
-                    public List<GalleryImageModel> call(Response<JsonObject> response) {
-                        List<GalleryImageModel> images = new ArrayList<>();
+                    public List<GalleryImageModelAndroid> call(Response<JsonObject> response) {
+                        List<GalleryImageModelAndroid> images = new ArrayList<>();
 
                         if(response != null) {
                             if (response.isSuccessful()) {
@@ -131,7 +131,7 @@ public class MainPresenterImpl implements MainPresenter {
 
                                 for (BaseGalleryResponseModel m : baseResponses) {
                                     if (!m.isAlbum) {
-                                        GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                        GalleryImageModelAndroid galleryImage = (GalleryImageModelAndroid) m;
                                         images.add(galleryImage);
                                     }
                                 }
@@ -157,9 +157,9 @@ public class MainPresenterImpl implements MainPresenter {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<GalleryImageModel>>() {
+                .subscribe(new Action1<List<GalleryImageModelAndroid>>() {
                     @Override
-                    public void call(List<GalleryImageModel> galleryImageModels) {
+                    public void call(List<GalleryImageModelAndroid> galleryImageModels) {
                         model.addImages(galleryImageModels);
                         model.setImgurCurrentPage(model.getImgurCurrentPage() + 1);
 
@@ -183,7 +183,7 @@ public class MainPresenterImpl implements MainPresenter {
     private void generateCardData() {
         List<BaseModel> cards = new ArrayList<>();
         String joke;
-        GalleryImageModel image;
+        GalleryImageModelAndroid image;
 
         //Add an Imgur image and then a Chuck Norris Joke
         while((joke = model.getNextJoke()) != null && (image = model.getNextImage()) != null) {

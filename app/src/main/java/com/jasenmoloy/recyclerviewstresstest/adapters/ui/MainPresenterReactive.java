@@ -6,8 +6,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur.GalleryResponse;
 import com.jasenmoloy.recyclerviewstresstest.application.Constants;
+import com.jasenmoloy.recyclerviewstresstest.application.models.imgur.GalleryImageModelAndroid;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 import com.jasenmoloy.recyclerviewstresstest.drivers.App;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import rx.functions.Func2;
 public class MainPresenterReactive {
     static class RestApiPair {
         List<String> chuckNorrisJokes;
-        List<GalleryImageModel> imgurImages;
+        List<GalleryImageModelAndroid> imgurImages;
 
         public RestApiPair() {
             chuckNorrisJokes = new ArrayList<>();
@@ -69,7 +69,7 @@ public class MainPresenterReactive {
 
                         for (BaseGalleryResponseModel m : baseResponses) {
                             if (!m.isAlbum) {
-                                GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                GalleryImageModelAndroid galleryImage = (GalleryImageModelAndroid) m;
                                 pair.imgurImages.add(galleryImage);
                             }
                         }
@@ -102,7 +102,7 @@ public class MainPresenterReactive {
 
                                     for (BaseGalleryResponseModel m : baseResponses) {
                                         if (!m.isAlbum) {
-                                            GalleryImageModel galleryImage = (GalleryImageModel) m;
+                                            GalleryImageModelAndroid galleryImage = (GalleryImageModelAndroid) m;
                                             pair.imgurImages.add(galleryImage);
                                         }
                                     }

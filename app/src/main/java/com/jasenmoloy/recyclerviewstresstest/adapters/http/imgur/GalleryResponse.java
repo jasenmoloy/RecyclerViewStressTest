@@ -3,9 +3,9 @@ package com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.jasenmoloy.recyclerviewstresstest.application.models.imgur.GalleryImageModelAndroid;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.BaseGalleryResponseModel;
 import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryAlbumModel;
-import com.jasenmoloy.recyclerviewstresstest.domain.models.imgur.GalleryImageModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class GalleryResponse {
             if(array.get(i).getAsJsonObject().get("is_album").getAsBoolean()) {
                 responses.add(gson.fromJson(array.get(i), GalleryAlbumModel.class));
             } else {
-                responses.add(gson.fromJson(array.get(i), GalleryImageModel.class));
+                responses.add(gson.fromJson(array.get(i), GalleryImageModelAndroid.class));
             }
         }
 
