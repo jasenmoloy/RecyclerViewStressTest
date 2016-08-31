@@ -18,6 +18,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
+    private static final String SAVED_RECYCLER_LAYOUT = "view_recycler_layout";
+
     RecyclerView recyclerView;
     MainRecyclerViewAdapter recyclerAdapter;
     MainPresenter presenter;
@@ -51,11 +53,19 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         presenter = new MainPresenterImpl(this);
         presenter.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            //Set the saved layout state. Note: This must done after the data has been populated!
+            recyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SAVED_RECYCLER_LAYOUT));
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         presenter.onSaveInstanceState(outState);
+
+        //Remember the layout the recycler view is in
+        outState.putParcelable(SAVED_RECYCLER_LAYOUT, recyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     @Override

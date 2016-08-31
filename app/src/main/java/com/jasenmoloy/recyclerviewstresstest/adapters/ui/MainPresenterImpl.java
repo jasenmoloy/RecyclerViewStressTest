@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
-import com.google.gson.internal.Primitives;
 import com.jasenmoloy.recyclerviewstresstest.adapters.http.imgur.GalleryResponse;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.ChuckNorrisJokeModel;
@@ -45,39 +44,45 @@ public class MainPresenterImpl implements MainPresenter {
     public void onCreate(Bundle savedInstanceBundle) {
         unsubscribeFromAll();
 
-        apiSub = App.getChuckNorrisApi().getItems(10000, "Chuck", "Norris")
-                .observeOn(Schedulers.io())
-                .map(MainPresenterReactive.convertChuckNorrisApiToList())
-                .zipWith(
-                        App.getImgurApi().getGallery(
-                                Constants.IMGUR_CLIENTID,
-                                "hot",
-                                "viral",
-                                model.getImgurCurrentPage()).retry(3),
-                        MainPresenterReactive.mergeImgurResults())
-                .onErrorResumeNext(MainPresenterReactive.onChuckNorrisApiError())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<MainPresenterReactive.RestApiPair>() {
-                    @Override
-                    public void call(MainPresenterReactive.RestApiPair pair) {
-                        model.addChuckNorrisJokes(pair.chuckNorrisJokes);
-                        model.addImages(pair.imgurImages);
-                        model.setImgurCurrentPage(model.getImgurCurrentPage() + 1);
+        if(savedInstanceBundle == null) { //Load up from scratch
+            apiSub = App.getChuckNorrisApi().getItems(10000, "Chuck", "Norris")
+                    .observeOn(Schedulers.io())
+                    .map(MainPresenterReactive.convertChuckNorrisApiToList())
+                    .zipWith(
+                            App.getImgurApi().getGallery(
+                                    Constants.IMGUR_CLIENTID,
+                                    "hot",
+                                    "viral",
+                                    model.getImgurCurrentPage()).retry(3),
+                            MainPresenterReactive.mergeImgurResults())
+                    .onErrorResumeNext(MainPresenterReactive.onChuckNorrisApiError())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Action1<MainPresenterReactive.RestApiPair>() {
+                        @Override
+                        public void call(MainPresenterReactive.RestApiPair pair) {
+                            model.addChuckNorrisJokes(pair.chuckNorrisJokes);
+                            model.addImages(pair.imgurImages);
+                            model.setImgurCurrentPage(model.getImgurCurrentPage() + 1);
 
-                        generateCardData();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        onItemsError(throwable);
-                    }
-                });
+                            generateCardData();
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            onItemsError(throwable);
+                        }
+                    });
+        } else {
+            model = new MainModel(savedInstanceBundle.getBundle("model"));
+
+            generateCardData();
+        }
 }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-
+        outState.putBundle("model", model.onSaveInstanceState());
     }
 
     @Override
@@ -131,7 +136,18 @@ public class MainPresenterImpl implements MainPresenter {
                                     }
                                 }
                             } else {
-                                throw Exceptions.propagate(new IOException("Imgur gallery request returned " + response.code()));
+                                try {
+                                    Log.e("JAM", response.errorBody().string());
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+
+                                throw Exceptions.propagate(new IOException(
+                                        "Imgur gallery request returned " +
+                                                response.code() +
+                                                ". Message: " +
+                                                response.message()
+                                ));
                             }
                         } else {
                             throw new NullPointerException("Retrofit response is null");

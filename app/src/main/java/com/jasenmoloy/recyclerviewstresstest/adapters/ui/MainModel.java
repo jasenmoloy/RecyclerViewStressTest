@@ -1,5 +1,6 @@
 package com.jasenmoloy.recyclerviewstresstest.adapters.ui;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -12,8 +13,12 @@ import java.util.List;
  * Created by jasenmoloy on 8/16/16.
  */
 public class MainModel {
-    private List<String> chuckNorrisJokes;
-    private List<GalleryImageModel> images;
+    private static final String SAVED_JOKES_LIST = "model_jokes";
+    private static final String SAVED_IMAGES_LIST = "model_images";
+    private static final String SAVED_CURRENT_PAGE = "model_current_page";
+
+    private ArrayList<String> chuckNorrisJokes;
+    private ArrayList<GalleryImageModel> images;
 
     private int jokesIdx = 0;
     private int imagesIdx = 0;
@@ -27,6 +32,15 @@ public class MainModel {
         jokesIdx = 0;
         imagesIdx = 0;
         imgurCurrentPage = 0;
+    }
+
+    public MainModel(Bundle instanceState) {
+        chuckNorrisJokes = instanceState.getStringArrayList(SAVED_JOKES_LIST);
+        images = instanceState.getParcelableArrayList(SAVED_IMAGES_LIST);
+        imgurCurrentPage = instanceState.getInt(SAVED_CURRENT_PAGE);
+
+        jokesIdx = 0;
+        imagesIdx = 0;
     }
 
     public void setImgurCurrentPage(int imgurCurrentPage) {
@@ -75,5 +89,15 @@ public class MainModel {
             return null;
 
         return chuckNorrisJokes.get(jokesIdx++);
+    }
+
+    public Bundle onSaveInstanceState() {
+        Bundle outBundle = new Bundle();
+
+        outBundle.putStringArrayList(SAVED_JOKES_LIST, chuckNorrisJokes);
+        outBundle.putParcelableArrayList(SAVED_IMAGES_LIST, images);
+        outBundle.putInt(SAVED_CURRENT_PAGE, imgurCurrentPage);
+
+        return outBundle;
     }
 }
