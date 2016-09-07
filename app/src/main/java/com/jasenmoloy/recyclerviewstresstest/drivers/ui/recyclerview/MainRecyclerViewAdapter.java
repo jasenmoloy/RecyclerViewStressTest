@@ -1,9 +1,9 @@
 package com.jasenmoloy.recyclerviewstresstest.drivers.ui.recyclerview;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.jasenmoloy.recyclerviewstresstest.R;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by jasenmoloy on 8/14/16.
  */
-public class MainRecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
+public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
     List<BaseModel> cardData;
 
     public MainRecyclerViewAdapter() {
@@ -44,17 +44,17 @@ public class MainRecyclerViewAdapter<T> extends RecyclerView.Adapter<ViewHolder>
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        CardView cardView = null;
+        ViewGroup viewGroup = null;
         ViewHolder holder = null;
 
         switch(viewType) {
             case CardViewTypes.CHUCKNORRISJOKE:
-                cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_chucknorrisjoke, parent, false);
-                holder = new ChuckNorrisJokeCard(cardView);
+                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_chucknorrisjoke, parent, false);
+                holder = new ChuckNorrisJokeCard(viewGroup);
                 break;
             case CardViewTypes.IMGURIMAGE:
-                cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_imgurimage, parent, false);
-                holder = new ImgurImageCard(cardView);
+                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_imgurimage, parent, false);
+                holder = new ImgurImageCard(viewGroup);
                 break;
         }
 

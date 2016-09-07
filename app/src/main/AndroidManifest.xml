@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:name=".drivers.App"
-        android:theme="@style/Theme.AppCompat.NoActionBar" >
+        android:theme="@style/AppTheme" >
         <activity android:name=".drivers.ui.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
