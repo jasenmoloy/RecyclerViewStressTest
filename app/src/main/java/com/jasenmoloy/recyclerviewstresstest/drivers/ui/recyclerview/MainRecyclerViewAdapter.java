@@ -49,11 +49,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         switch(viewType) {
             case CardViewTypes.CHUCKNORRISJOKE:
-                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_chucknorrisjoke, parent, false);
+                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_chucknorrisjoke, parent, false);
                 holder = new ChuckNorrisJokeCard(viewGroup);
                 break;
             case CardViewTypes.IMGURIMAGE:
-                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_imgurimage, parent, false);
+                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_imgurimage, parent, false);
                 holder = new ImgurImageCard(viewGroup);
                 break;
         }
