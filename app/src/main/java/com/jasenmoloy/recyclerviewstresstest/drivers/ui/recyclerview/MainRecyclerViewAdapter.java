@@ -2,8 +2,8 @@ package com.jasenmoloy.recyclerviewstresstest.drivers.ui.recyclerview;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.jasenmoloy.recyclerviewstresstest.R;
 import com.jasenmoloy.recyclerviewstresstest.adapters.ui.mainrecyclerview.BaseModel;
@@ -44,17 +44,17 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ViewGroup viewGroup = null;
+        View view = null;
         ViewHolder holder = null;
 
         switch(viewType) {
             case CardViewTypes.CHUCKNORRISJOKE:
-                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_chucknorrisjoke, parent, false);
-                holder = new ChuckNorrisJokeCard(viewGroup);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_chucknorrisjoke, parent, false);
+                holder = new ChuckNorrisJokeCard(view);
                 break;
             case CardViewTypes.IMGURIMAGE:
-                viewGroup = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_imgurimage, parent, false);
-                holder = new ImgurImageCard(viewGroup);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_imgurimage, parent, false);
+                holder = new ImgurImageCard(view);
                 break;
         }
 
